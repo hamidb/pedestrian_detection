@@ -29,6 +29,14 @@ P_WIDTH    = 32
 P_HEIGHT   = 64
 DEPTH      = 3
 
+"""
+To read .seq file, some data formats are inspired from:
+http://blog.csdn.net/a2008301610258/article/details/45873867#
+Also some .vbb file formats are inspired from: 
+https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/scripts/convert_annotations.py
+
+"""
+
 def open_seq_file(file):
     global img_width
     global img_height
