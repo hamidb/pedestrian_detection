@@ -9,7 +9,7 @@ This project contains scripts and programs for pedestrian detection using deep n
 +-- README.md                                   // readme
 ```
 
-### download_and_convert.py
+#### download_and_convert.py
 This script downloads and extract Caltech Pedestrian Detection dataset and convert it to a format that is understood by python and OpenCV. OpenCV is used to visualize annotation and labeling.
 For easier use afterwards, binary files can be created consisting strings of extracted samples and labels.
 ###### Parameters: 
