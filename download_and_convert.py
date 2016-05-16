@@ -20,7 +20,7 @@ import struct
 data_dir   = os.getcwd() + '/data'
 web_url    = 'http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/datasets/USA'
 resize     = True
-display    = True
+display    = False
 # minimum allowable width and height to collect samples
 MIN_WIDTH  = 15
 MIN_HEIGHT = 15
@@ -134,10 +134,13 @@ def save_records(record_str, filename):
     record_bytes = DEPTH * P_WIDTH * P_HEIGHT + 1
     object_n = len(record_str)/record_bytes
     assert np.floor(object_n) - object_n == 0, 'number of objects is not an integer: %r' % object_n
-    print('Saved %d object (%d/%d bytes) to %s'
-           % (object_n, len(record_str),
-              os.stat(filename).st_size,
-              os.path.basename(filename)))
+    if object_n == 0:
+        print('No object found for "%s"' % os.path.basename(filename).split('.')[0])
+    else:
+        print('Saved %d object (%d/%d bytes) to %s'
+               % (object_n, len(record_str),
+                  os.stat(filename).st_size,
+                  os.path.basename(filename)))
 
 if __name__=="__main__":  
     # download caltech dataset if it is not downloaded
