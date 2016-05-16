@@ -161,7 +161,8 @@ if __name__=="__main__":
                     if not os.path.exists(save_seq_dir):
                         os.makedirs(save_seq_dir)
                     objList, objLbl, err = load_annotation(setname, filename)
-                    print('Processing "%s/%s" ...' % (setname, filename))
+                    sys.stdout.write('\rProcessing "%s/%s" ...' % (setname, filename))
+                    sys.stdout.flush()
                     # check if the annotation file exists
                     if err:
                         print('Obj is empty with code %d' % err)
