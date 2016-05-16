@@ -18,6 +18,7 @@ import numpy as np
 import struct
 
 data_dir   = os.getcwd() + '/data'
+save_dir   = os.getcwd() + '/output'
 web_url    = 'http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/datasets/USA'
 resize     = True
 display    = False
@@ -148,17 +149,17 @@ if __name__=="__main__":
     total_patches = total_frames = frame_n = patch_n = 0
     for setpath in sorted(glob.glob(data_dir+"/set*")):
         setname = os.path.basename(setpath)
+        record_str = StringIO()
         for parent, dirnames, filenames in os.walk(setpath):  
             for filename in sorted(filenames):  
                 # check .seq file with suffix  
                 if fnmatch.fnmatch(filename,'*.seq'):  
                     # get path of each .seq file 
                     filepath = os.path.join(parent, filename)
-                    record_str = StringIO()
                     # create saving directory for each seq file
-                    save_dir = filepath.split('.')[0]
-                    if not os.path.exists(save_dir):
-                        os.makedirs(save_dir)
+                    save_seq_dir = ''.join([save_dir, '/', setname, '/', filename.split('.')[0]])
+                    if not os.path.exists(save_seq_dir):
+                        os.makedirs(save_seq_dir)
                     objList, objLbl, err = load_annotation(setname, filename)
                     print('Processing "%s/%s" ...' % (setname, filename))
                     # check if the annotation file exists
@@ -193,7 +194,7 @@ if __name__=="__main__":
                                     patch = img[pos[1]:pos[1]+pos[3], pos[0]:pos[0]+pos[2]]
                                     if resize:
                                         patch = cv.resize(patch, (P_WIDTH, P_HEIGHT), cv.INTER_CUBIC)
-                                    save_name = os.path.join(save_dir, "%04d.jpg" % patch_n)
+                                    save_name = os.path.join(save_seq_dir, "%04d.jpg" % patch_n)
                                     # seperate record string with '1' as a label for 'person'
                                     record_str.write('1')
                                     record_str.write(patch.tostring())
@@ -207,6 +208,6 @@ if __name__=="__main__":
                                 cv.destroyAllWindows()
                                 exit()
                         frame_n += 1
-                    save_records(record_str.getvalue(), ''.join([save_dir, '.bin']))
+            save_records(record_str.getvalue(), ''.join([save_dir, '/', setname, '.bin']))
     print('Total %d positive samples are extracted '
           'from %d frames.' % (total_patches, total_frames))
