@@ -3,16 +3,16 @@ from __future__ import division
 from __future__ import print_function
 
 from six.moves import urllib
-from scipy.io import loadmat 
+from scipy.io import loadmat
 from itertools import izip
 from cStringIO import StringIO
 
 import tarfile, zipfile
 import glob
 import sys
-import os.path  
-import fnmatch  
-import shutil 
+import os.path
+import fnmatch
+import shutil
 import cv2 as cv
 import numpy as np
 import struct
@@ -33,7 +33,7 @@ DEPTH      = 3
 """
 To read .seq file, some data formats are inspired from:
 http://blog.csdn.net/a2008301610258/article/details/45873867#
-Also some .vbb file formats are inspired from: 
+Also some .vbb file formats are inspired from:
 https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/scripts/convert_annotations.py
 
 """
@@ -41,7 +41,7 @@ https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/scrip
 def open_seq_file(file):
     global img_width
     global img_height
-    # read .seq file, and save the images into the savepath  
+    # read .seq file, and save the images into the savepath
     with open(file,'rb') as f:
         # get rid of seq header containing some info about the seq
         header = str(f.read(548))
@@ -51,19 +51,19 @@ def open_seq_file(file):
         header = str(f.read(468))
         string = str(f.read())
         # each image's header
-        img_header = "\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46"  
+        img_header = "\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46"
         # split .seq file into segment with the image header
-        strlist=string.split(img_header)  
-    count = 0  
+        strlist=string.split(img_header)
+    count = 0
     for img in strlist:
-        # ignore the header  
+        # ignore the header
         if count > 0:
             # add image header to img data
-            img = os.path.join(img_header[0:9], img) 
+            img = os.path.join(img_header[0:9], img)
             image = cv.imdecode(np.frombuffer(img, np.uint8), 1)
             yield image
-        count += 1  
- 
+        count += 1
+
 def load_annotation(setname, seqname):
     filepath = 'data/annotations/' + setname + '/' + seqname.split('.')[0] + '.vbb'
     if not os.path.exists(filepath):
@@ -124,7 +124,7 @@ def draw_objects(img_draw, pos, posv, occl):
     # draw visible parts if any
     draw_body(img_draw, posv, (0, 255, 0), 1) if occl else None
     # draw label
-    draw_label(img_draw, lbl, pos, (0, 0, 255), 1) 
+    draw_label(img_draw, lbl, pos, (0, 0, 255), 1)
 
 def save_records(record_str, filename):
     # delete .bin file if exists
@@ -143,18 +143,18 @@ def save_records(record_str, filename):
                   os.stat(filename).st_size,
                   os.path.basename(filename)))
 
-if __name__=="__main__":  
+if __name__=="__main__":
     # download caltech dataset if it is not downloaded
     download_dataset()
     total_patches = total_frames = frame_n = patch_n = 0
     for setpath in sorted(glob.glob(data_dir+"/set*")):
         setname = os.path.basename(setpath)
         record_str = StringIO()
-        for parent, dirnames, filenames in os.walk(setpath):  
-            for filename in sorted(filenames):  
-                # check .seq file with suffix  
-                if fnmatch.fnmatch(filename,'*.seq'):  
-                    # get path of each .seq file 
+        for parent, dirnames, filenames in os.walk(setpath):
+            for filename in sorted(filenames):
+                # check .seq file with suffix
+                if fnmatch.fnmatch(filename,'*.seq'):
+                    # get path of each .seq file
                     filepath = os.path.join(parent, filename)
                     # create saving directory for each seq file
                     save_seq_dir = ''.join([save_dir, '/', setname, '/', filename.split('.')[0]])
@@ -167,7 +167,7 @@ if __name__=="__main__":
                     if err:
                         print('Obj is empty with code %d' % err)
                         continue
-                    total_patches += patch_n 
+                    total_patches += patch_n
                     total_frames += frame_n
                     frame_n = patch_n = 0
                     for img in  open_seq_file(filepath):
